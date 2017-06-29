@@ -61,6 +61,8 @@ private:
 
     void createSwapchain();
 
+    void createImageViews();
+
     bool isDeviceSuitable(VkPhysicalDevice device);
 
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
@@ -83,6 +85,7 @@ private:
     VkSurfaceKHR surface;
     VkSwapchainKHR swapchain;
     std::vector<VkImage> swapchainImages;
+    std::vector<VkImageView> swapchainImageViews;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
 };
