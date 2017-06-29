@@ -4,6 +4,7 @@
 
 #include <jni.h>
 #include <android/log.h>
+#include<android/native_window_jni.h>
 
 #include <iostream>
 #include <vector>
@@ -68,16 +69,16 @@ struct QueueFamilyIndices {
 
 class HelloTriangleApplication {
 public:
-    void run() {
-        initWindow();
+    void run(ANativeWindow *window) {
+        initWindow(window);
         initVulkan();
         mainLoop();
         cleanUp();
     }
 
 private:
-    void initWindow() {
-        LOGI("no GLFW in Android :(");
+    void initWindow(ANativeWindow *window) {
+        this->window = window;
     }
 
     void initVulkan() {
@@ -87,6 +88,7 @@ private:
 
         createInstance();
         setUpDebugCallback();
+        createSurface();
         pickPhysicalDevice();
         createLogicalDevice();
     }
@@ -138,6 +140,16 @@ private:
 
         if (CreateDebugReportCallbackEXT(instance, &createInfo, nullptr, &callback) != VK_SUCCESS) {
             throw std::runtime_error("failed to set up debug callback!");
+        }
+    }
+
+    void createSurface() {
+        VkAndroidSurfaceCreateInfoKHR createInfo = {};
+        createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+        createInfo.window = window;
+
+        if (vkCreateAndroidSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create window surface!");
         }
     }
 
@@ -288,6 +300,8 @@ private:
     void cleanUp() {
         vkDestroyDevice(device, nullptr);
         DestroyDebugReportCallbackEXT(instance, callback, nullptr);
+        vkDestroySurfaceKHR(instance, surface, nullptr);
+        ANativeWindow_release(window);
         vkDestroyInstance(instance, nullptr);
     }
 
@@ -334,19 +348,28 @@ private:
 
     VkInstance instance;
     VkDebugReportCallbackEXT callback;
+    ANativeWindow* window;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
     VkQueue graphicsQueue;
+    VkSurfaceKHR surface;
 };
 
 extern "C" {
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_MainActivity_runVulkan(JNIEnv *env, jobject instance) {
+Java_com_github_piasy_vulkantutorial_MainActivity_runVulkan(
+        JNIEnv *env, jobject instance, jobject surface) {
     LOGI("Vulkan app start");
+
+    ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
+    if (window == nullptr) {
+        LOGE("get window from surface fail!");
+        return;
+    }
 
     HelloTriangleApplication app;
     try {
-        app.run();
+        app.run(window);
     } catch (const std::runtime_error &e) {
         LOGE("runtime error: %s", e.what());
     }
