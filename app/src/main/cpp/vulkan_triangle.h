@@ -5,17 +5,10 @@
 #ifndef VULKANTUTORIAL_ANDROID_VULKAN_TRIANGLE_H
 #define VULKANTUTORIAL_ANDROID_VULKAN_TRIANGLE_H
 
-#include <jni.h>
 #include <android/log.h>
-#include<android/native_window_jni.h>
+#include <android/asset_manager.h>
 
-#include <iostream>
 #include <vector>
-#include <set>
-#include <algorithm>
-#include <stdexcept>
-#include <cstring>
-#include <functional>
 
 #include "vulkan_wrapper/vulkan_wrapper.h"
 
@@ -40,6 +33,15 @@ struct SwapchainSupportDetails {
 
 class HelloTriangleApplication {
 public:
+    HelloTriangleApplication(
+            AAssetManager *assetManager,
+            const char *vertexShader,
+            const char *fragmentShader) :
+            assetManager(assetManager),
+            vertexShader(vertexShader),
+            fragmentShader(fragmentShader) {
+    }
+
     void run(ANativeWindow *window);
 
 private:
@@ -63,6 +65,14 @@ private:
 
     void createImageViews();
 
+    void createRenderPass();
+
+    void createGraphicsPipeline();
+
+    std::vector<char> readAsset(const char *name);
+
+    VkShaderModule createShaderModule(const std::vector<char> &code);
+
     bool isDeviceSuitable(VkPhysicalDevice device);
 
     bool checkDeviceExtensionSupport(VkPhysicalDevice device);
@@ -75,6 +85,10 @@ private:
 
     void cleanUp();
 
+    AAssetManager *assetManager;
+    const char *vertexShader;
+    const char *fragmentShader;
+
     VkInstance instance;
     VkDebugReportCallbackEXT callback;
     ANativeWindow *window;
@@ -86,8 +100,11 @@ private:
     VkSwapchainKHR swapchain;
     std::vector<VkImage> swapchainImages;
     std::vector<VkImageView> swapchainImageViews;
-    VkFormat swapChainImageFormat;
-    VkExtent2D swapChainExtent;
+    VkFormat swapchainImageFormat;
+    VkExtent2D swapchainExtent;
+    VkRenderPass renderPass;
+    VkPipelineLayout pipelineLayout;
+    VkPipeline graphicsPipeline;
 };
 
 #endif //VULKANTUTORIAL_ANDROID_VULKAN_TRIANGLE_H

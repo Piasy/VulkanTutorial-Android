@@ -27,6 +27,7 @@ android {
 
     sourceSets {
         debug {
+            ndkDir = 'src/main/cpp'
             jniLibs {
                 // Must have ndk-r12 or better which including layer binaries
                 srcDirs = ["${valLayerBinDir}"]

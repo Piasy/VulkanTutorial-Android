@@ -23,7 +23,9 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              ${VK_WRAPPER_DIR}/vulkan_wrapper.cpp
-             ${SRC_DIR}/vulkan_triangle.cpp )
+             ${SRC_DIR}/vulkan_triangle.cpp
+             ${SRC_DIR}/vulkan_triangle_jni.cpp
+             )
 
 include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include)
 
