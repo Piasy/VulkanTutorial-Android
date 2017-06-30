@@ -14,6 +14,7 @@ cmake_minimum_required(VERSION 3.4.1)
 set(SRC_DIR src/main/cpp)
 set(VK_WRAPPER_DIR src/main/cpp/vulkan_wrapper)
 set(VK_VAL_LAYER_SRC_DIR ${ANDROID_NDK}/sources/third_party/vulkan/src)
+set(GLM_SRC_DIR src/main/cpp/glm)
 
 add_library( # Sets the name of the library.
              vulkan-tutorial
@@ -27,7 +28,7 @@ add_library( # Sets the name of the library.
              ${SRC_DIR}/vulkan_triangle_jni.cpp
              )
 
-include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include)
+include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include  ${GLM_SRC_DIR})
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
