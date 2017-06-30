@@ -75,6 +75,10 @@ private:
 
     void createFramebuffers();
 
+    void createCommandPool();
+
+    void createCommandBuffers();
+
     std::vector<char> readAsset(const char *name);
 
     VkShaderModule createShaderModule(const std::vector<char> &code);
@@ -108,6 +112,8 @@ private:
     VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
+    VkCommandPool commandPool;
+    std::vector<VkCommandBuffer> commandBuffers;
 };
 
 #endif //VULKANTUTORIAL_ANDROID_VULKAN_TRIANGLE_H
