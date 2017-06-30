@@ -46,4 +46,11 @@ Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_run(
     app->run(window);
 }
 
+JNIEXPORT void JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_stop__J(JNIEnv *env, jclass type,
+                                                                      jlong nativeHandle) {
+    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    app->stop();
+}
+
 }

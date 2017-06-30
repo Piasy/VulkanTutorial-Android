@@ -29,6 +29,13 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mTriangleApplication.stop();
+    }
+
+    @Override
     public void surfaceCreated(final SurfaceHolder holder) {
         mTriangleApplication.run(holder.getSurface());
     }

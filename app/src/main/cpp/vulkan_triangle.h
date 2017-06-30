@@ -40,10 +40,15 @@ public:
             const char *fragmentShader) :
             assetManager(assetManager),
             vertexShader(std::string(vertexShader)),
-            fragmentShader(std::string(fragmentShader)) {
+            fragmentShader(std::string(fragmentShader)),
+            running(true) {
     }
 
     void run(ANativeWindow *window);
+
+    inline void stop() {
+        running = false;
+    }
 
 private:
     inline void initWindow(ANativeWindow *window) {
@@ -80,6 +85,10 @@ private:
 
     void createCommandBuffers();
 
+    void createSemaphores();
+
+    void drawFrame();
+
     std::vector<char> readAsset(std::string name);
 
     VkShaderModule createShaderModule(const std::vector<char> &code);
@@ -95,6 +104,7 @@ private:
     AAssetManager *assetManager;
     std::string vertexShader;
     std::string fragmentShader;
+    bool running;
 
     VkInstance instance;
     VkDebugReportCallbackEXT callback;
@@ -115,6 +125,9 @@ private:
     VkPipeline graphicsPipeline;
     VkCommandPool commandPool;
     std::vector<VkCommandBuffer> commandBuffers;
+
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
 };
 
 #endif //VULKANTUTORIAL_ANDROID_VULKAN_TRIANGLE_H

@@ -26,6 +26,8 @@ public class HelloTriangleApplication {
 
     private static native void run(long nativeHandle, Surface surface);
 
+    private static native void stop(long nativeHandle);
+
     public void run(final Surface surface) {
         new Thread(new Runnable() {
             @Override
@@ -33,5 +35,9 @@ public class HelloTriangleApplication {
                 HelloTriangleApplication.run(mNativeHandle, surface);
             }
         }).start();
+    }
+
+    public void stop() {
+        stop(mNativeHandle);
     }
 }
