@@ -51,6 +51,10 @@ private:
 
     void initVulkan();
 
+    void mainLoop();
+
+    void cleanUp();
+
     void createInstance();
 
     void setUpDebugCallback();
@@ -69,6 +73,8 @@ private:
 
     void createGraphicsPipeline();
 
+    void createFramebuffers();
+
     std::vector<char> readAsset(const char *name);
 
     VkShaderModule createShaderModule(const std::vector<char> &code);
@@ -80,10 +86,6 @@ private:
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
     SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device);
-
-    void mainLoop();
-
-    void cleanUp();
 
     AAssetManager *assetManager;
     const char *vertexShader;
@@ -100,6 +102,7 @@ private:
     VkSwapchainKHR swapchain;
     std::vector<VkImage> swapchainImages;
     std::vector<VkImageView> swapchainImageViews;
+    std::vector<VkFramebuffer> swapchainFramebuffers;
     VkFormat swapchainImageFormat;
     VkExtent2D swapchainExtent;
     VkRenderPass renderPass;
