@@ -9,6 +9,7 @@
 #include <android/asset_manager.h>
 
 #include <vector>
+#include <string>
 
 #include "vulkan_wrapper/vulkan_wrapper.h"
 
@@ -38,8 +39,8 @@ public:
             const char *vertexShader,
             const char *fragmentShader) :
             assetManager(assetManager),
-            vertexShader(vertexShader),
-            fragmentShader(fragmentShader) {
+            vertexShader(std::string(vertexShader)),
+            fragmentShader(std::string(fragmentShader)) {
     }
 
     void run(ANativeWindow *window);
@@ -79,7 +80,7 @@ private:
 
     void createCommandBuffers();
 
-    std::vector<char> readAsset(const char *name);
+    std::vector<char> readAsset(std::string name);
 
     VkShaderModule createShaderModule(const std::vector<char> &code);
 
@@ -92,8 +93,8 @@ private:
     SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice device);
 
     AAssetManager *assetManager;
-    const char *vertexShader;
-    const char *fragmentShader;
+    std::string vertexShader;
+    std::string fragmentShader;
 
     VkInstance instance;
     VkDebugReportCallbackEXT callback;

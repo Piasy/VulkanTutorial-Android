@@ -6,44 +6,44 @@
 #include <android/native_window_jni.h>
 #include <android/asset_manager_jni.h>
 
-#include <stdexcept>
-
 #include "vulkan_triangle.h"
 
 extern "C" {
-JNIEXPORT void JNICALL Java_com_github_piasy_vulkantutorial_MainActivity_runVulkan(
-        JNIEnv *env,
-        jobject instance,
-        jobject surface,
-        jobject assetManager_,
-        jstring vertexShader_,
-        jstring fragmentShader_) {
-    LOGI("Vulkan app start");
 
-    ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
-    if (window == nullptr) {
-        LOGE("get window from surface fail!");
-        return;
-    }
+JNIEXPORT jlong JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_create(
+        JNIEnv *env, jclass type, jobject assetManager_, jstring vertexShader_,
+        jstring fragmentShader_) {
+
     AAssetManager *assetManager = AAssetManager_fromJava(env, assetManager_);
     if (assetManager == nullptr) {
         LOGE("get assetManager fail!");
-        return;
+        return 0;
     }
 
     const char *vertexShader = env->GetStringUTFChars(vertexShader_, 0);
     const char *fragmentShader = env->GetStringUTFChars(fragmentShader_, 0);
 
-    HelloTriangleApplication app(assetManager, vertexShader, fragmentShader);
-    try {
-        app.run(window);
-    } catch (const std::runtime_error &e) {
-        LOGE("runtime error: %s", e.what());
-    }
+    HelloTriangleApplication *app = new HelloTriangleApplication(assetManager, vertexShader,
+                                                                 fragmentShader);
 
     env->ReleaseStringUTFChars(vertexShader_, vertexShader);
     env->ReleaseStringUTFChars(fragmentShader_, fragmentShader);
 
-    LOGI("Vulkan app exit");
+    return (jlong) app;
 }
+
+JNIEXPORT void JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_run(
+        JNIEnv *env, jclass type, jlong nativeHandle, jobject surface) {
+    ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
+    if (window == nullptr) {
+        LOGE("get window from surface fail!");
+        return;
+    }
+
+    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    app->run(window);
+}
+
 }

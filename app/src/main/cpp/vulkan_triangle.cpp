@@ -5,7 +5,6 @@
 #include <set>
 #include <algorithm>
 #include <stdexcept>
-#include <cstring>
 #include <functional>
 
 #include "vulkan_triangle.h"
@@ -685,8 +684,8 @@ void HelloTriangleApplication::createCommandBuffers() {
     }
 }
 
-std::vector<char> HelloTriangleApplication::readAsset(const char *name) {
-    AAsset *file = AAssetManager_open(assetManager, name, AASSET_MODE_BUFFER);
+std::vector<char> HelloTriangleApplication::readAsset(std::string name) {
+    AAsset *file = AAssetManager_open(assetManager, name.c_str(), AASSET_MODE_BUFFER);
     size_t len = AAsset_getLength(file);
     std::vector<char> buffer(len);
 
@@ -694,7 +693,7 @@ std::vector<char> HelloTriangleApplication::readAsset(const char *name) {
 
     AAsset_close(file);
 
-    LOGI("read asset %s, length %d", name, len);
+    LOGI("read asset %s, length %d", name.c_str(), len);
 
     return buffer;
 }
