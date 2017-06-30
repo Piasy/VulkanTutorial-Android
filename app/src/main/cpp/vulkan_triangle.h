@@ -17,6 +17,10 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, APP_NAME, __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, APP_NAME, __VA_ARGS__))
 
+#define STATE_RUNNING 1
+#define STATE_PAUSED 2
+#define STATE_EXIT 3
+
 struct QueueFamilyIndices {
     int graphicsFamily = -1;
     int presentFamily = -1;
@@ -41,13 +45,21 @@ public:
             assetManager(assetManager),
             vertexShader(std::string(vertexShader)),
             fragmentShader(std::string(fragmentShader)),
-            running(true) {
+            state(STATE_RUNNING) {
     }
 
     void run(ANativeWindow *window);
 
+    void pause();
+
+    inline void resume() {
+        state = STATE_RUNNING;
+    }
+
+    void surfaceChanged();
+
     inline void stop() {
-        running = false;
+        state = STATE_EXIT;
     }
 
 private:
@@ -89,6 +101,10 @@ private:
 
     void drawFrame();
 
+    void recreateSwapchain();
+
+    void cleanupSwapchain();
+
     std::vector<char> readAsset(std::string name);
 
     VkShaderModule createShaderModule(const std::vector<char> &code);
@@ -104,7 +120,7 @@ private:
     AAssetManager *assetManager;
     std::string vertexShader;
     std::string fragmentShader;
-    bool running;
+    int state;
 
     VkInstance instance;
     VkDebugReportCallbackEXT callback;

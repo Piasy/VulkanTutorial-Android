@@ -47,7 +47,28 @@ Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_run(
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_stop__J(JNIEnv *env, jclass type,
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_pause(JNIEnv *env, jclass type,
+                                                                       jlong nativeHandle) {
+    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    app->pause();
+}
+
+JNIEXPORT void JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_resume(JNIEnv *env, jclass type,
+                                                                        jlong nativeHandle) {
+    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    app->resume();
+}
+
+JNIEXPORT void JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_surfaceChanged(
+        JNIEnv *env, jclass type, jlong nativeHandle) {
+    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    app->surfaceChanged();
+}
+
+JNIEXPORT void JNICALL
+Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_stop(JNIEnv *env, jclass type,
                                                                       jlong nativeHandle) {
     HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
     app->stop();

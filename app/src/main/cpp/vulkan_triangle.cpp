@@ -208,6 +208,17 @@ void HelloTriangleApplication::run(ANativeWindow *window) {
     cleanUp();
 }
 
+void HelloTriangleApplication::pause() {
+    state = STATE_PAUSED;
+    vkDeviceWaitIdle(device);
+}
+
+void HelloTriangleApplication::surfaceChanged() {
+    state = STATE_PAUSED;
+    recreateSwapchain();
+    state = STATE_RUNNING;
+}
+
 void HelloTriangleApplication::initVulkan() {
     if (!InitVulkan()) {
         throw std::runtime_error("InitVulkan fail!");
@@ -231,8 +242,10 @@ void HelloTriangleApplication::initVulkan() {
 void HelloTriangleApplication::mainLoop() {
     LOGI("mainLoop start");
 
-    while (running) {
-        drawFrame();
+    while (state != STATE_EXIT) {
+        if (state == STATE_RUNNING) {
+            drawFrame();
+        }
     }
 
     vkDeviceWaitIdle(device);
@@ -241,32 +254,19 @@ void HelloTriangleApplication::mainLoop() {
 }
 
 void HelloTriangleApplication::cleanUp() {
+    cleanupSwapchain();
+
     vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
     vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 
     vkDestroyCommandPool(device, commandPool, nullptr);
 
-    for (size_t i = 0; i < swapchainFramebuffers.size(); i++) {
-        vkDestroyFramebuffer(device, swapchainFramebuffers[i], nullptr);
-    }
-
-    vkDestroyPipeline(device, graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-    vkDestroyRenderPass(device, renderPass, nullptr);
-
-    for (const auto &imageView : swapchainImageViews) {
-        vkDestroyImageView(device, imageView, nullptr);
-    }
-
-    vkDestroySwapchainKHR(device, swapchain, nullptr);
     vkDestroyDevice(device, nullptr);
-
     DestroyDebugReportCallbackEXT(instance, callback, nullptr);
-
     vkDestroySurfaceKHR(instance, surface, nullptr);
-    ANativeWindow_release(window);
-
     vkDestroyInstance(instance, nullptr);
+
+    ANativeWindow_release(window);
 }
 
 void HelloTriangleApplication::createInstance() {
@@ -709,8 +709,15 @@ void HelloTriangleApplication::createSemaphores() {
 
 void HelloTriangleApplication::drawFrame() {
     uint32_t imageIndex = 0;
-    vkAcquireNextImageKHR(device, swapchain, std::numeric_limits<uint64_t>::max(),
-                          imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(device, swapchain, std::numeric_limits<uint64_t>::max(),
+                                            imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        recreateSwapchain();
+        return;
+    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+        throw std::runtime_error("failed to acquire swap chain image!");
+    }
 
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -743,9 +750,49 @@ void HelloTriangleApplication::drawFrame() {
 
     presentInfo.pImageIndices = &imageIndex;
 
-    vkQueuePresentKHR(presentQueue, &presentInfo);
+    result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+        recreateSwapchain();
+    } else if (result != VK_SUCCESS) {
+        throw std::runtime_error("failed to present swap chain image!");
+    }
 
     vkQueueWaitIdle(presentQueue);
+}
+
+void HelloTriangleApplication::recreateSwapchain() {
+    LOGI("recreateSwapchain");
+
+    vkDeviceWaitIdle(device);
+
+    cleanupSwapchain();
+
+    createSwapchain();
+    createImageViews();
+    createRenderPass();
+    createGraphicsPipeline();
+    createFramebuffers();
+    createCommandBuffers();
+}
+
+void HelloTriangleApplication::cleanupSwapchain() {
+    for (size_t i = 0; i < swapchainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(device, swapchainFramebuffers[i], nullptr);
+    }
+
+    vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()),
+                         commandBuffers.data());
+
+    vkDestroyPipeline(device, graphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+    vkDestroyRenderPass(device, renderPass, nullptr);
+
+    for (size_t i = 0; i < swapchainImageViews.size(); i++) {
+        vkDestroyImageView(device, swapchainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(device, swapchain, nullptr);
 }
 
 std::vector<char> HelloTriangleApplication::readAsset(std::string name) {

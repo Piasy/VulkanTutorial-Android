@@ -26,6 +26,12 @@ public class HelloTriangleApplication {
 
     private static native void run(long nativeHandle, Surface surface);
 
+    private static native void pause(long nativeHandle);
+
+    private static native void resume(long nativeHandle);
+
+    private static native void surfaceChanged(long nativeHandle);
+
     private static native void stop(long nativeHandle);
 
     public void run(final Surface surface) {
@@ -35,6 +41,18 @@ public class HelloTriangleApplication {
                 HelloTriangleApplication.run(mNativeHandle, surface);
             }
         }).start();
+    }
+
+    public void pause() {
+        pause(mNativeHandle);
+    }
+
+    public void resume() {
+        resume(mNativeHandle);
+    }
+
+    public void surfaceChanged() {
+        surfaceChanged(mNativeHandle);
     }
 
     public void stop() {
