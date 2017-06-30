@@ -9,9 +9,11 @@
 #include <android/asset_manager.h>
 
 #include <vector>
+#include <array>
 #include <string>
 
-#include "vulkan_wrapper/vulkan_wrapper.h"
+#include <glm.hpp>
+#include <vulkan_wrapper.h>
 
 #define APP_NAME "VK-TUTORIAL"
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, APP_NAME, __VA_ARGS__))
@@ -34,6 +36,36 @@ struct SwapchainSupportDetails {
     VkSurfaceCapabilitiesKHR capabilities;
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> presentModes;
+};
+
+struct Vertex {
+    glm::vec2 pos;
+    glm::vec3 color;
+
+    static VkVertexInputBindingDescription getBindingDescription() {
+        VkVertexInputBindingDescription bindingDescription = {};
+        bindingDescription.binding = 0;
+        bindingDescription.stride = sizeof(Vertex);
+        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+        return bindingDescription;
+    }
+
+    static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = {};
+
+        attributeDescriptions[0].binding = 0;
+        attributeDescriptions[0].location = 0;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[0].offset = offsetof(Vertex, pos);
+
+        attributeDescriptions[1].binding = 0;
+        attributeDescriptions[1].location = 1;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+        return attributeDescriptions;
+    }
 };
 
 class HelloTriangleApplication {
@@ -95,6 +127,10 @@ private:
 
     void createCommandPool();
 
+    void createVertexBuffer();
+
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
     void createCommandBuffers();
 
     void createSemaphores();
@@ -140,6 +176,8 @@ private:
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     VkCommandPool commandPool;
+    VkBuffer vertexBuffer;
+    VkDeviceMemory vertexBufferMemory;
     std::vector<VkCommandBuffer> commandBuffers;
 
     VkSemaphore imageAvailableSemaphore;
