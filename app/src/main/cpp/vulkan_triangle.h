@@ -132,6 +132,8 @@ private:
 
     void createVertexBuffer();
 
+    void createIndexBuffer();
+
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
     uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -166,24 +168,31 @@ private:
     VkInstance instance;
     VkDebugReportCallbackEXT callback;
     ANativeWindow *window;
+    VkSurfaceKHR surface;
+
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device;
+
     VkQueue graphicsQueue;
     VkQueue presentQueue;
-    VkSurfaceKHR surface;
+
     VkSwapchainKHR swapchain;
-    std::vector<VkImage> swapchainImages;
-    std::vector<VkImageView> swapchainImageViews;
-    std::vector<VkFramebuffer> swapchainFramebuffers;
-    VkFormat swapchainImageFormat;
-    VkExtent2D swapchainExtent;
     VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
     VkCommandPool commandPool;
+
+    VkFormat swapchainImageFormat;
+    VkExtent2D swapchainExtent;
+    std::vector<VkImage> swapchainImages;
+    std::vector<VkImageView> swapchainImageViews;
+    std::vector<VkFramebuffer> swapchainFramebuffers;
+    std::vector<VkCommandBuffer> commandBuffers;
+
     VkBuffer vertexBuffer;
     VkDeviceMemory vertexBufferMemory;
-    std::vector<VkCommandBuffer> commandBuffers;
+    VkBuffer indexBuffer;
+    VkDeviceMemory indexBufferMemory;
 
     VkSemaphore imageAvailableSemaphore;
     VkSemaphore renderFinishedSemaphore;

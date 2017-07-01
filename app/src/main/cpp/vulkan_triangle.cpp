@@ -27,9 +27,13 @@ const std::vector<const char *> deviceExtensions = {
 };
 
 const std::vector<Vertex> vertices = {
-        {{0.0f,  -0.5f}, {1.0f, 1.0f, 1.0f}},
-        {{0.5f,  0.5f},  {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f},  {0.0f, 0.0f, 1.0f}}
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f,  -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{0.5f,  0.5f},  {0.0f, 0.0f, 1.0f}},
+        {{-0.5f, 0.5f},  {1.0f, 1.0f, 1.0f}}
+};
+const std::vector<uint16_t> indices = {
+        0, 1, 2, 2, 3, 0
 };
 
 #ifdef NDEBUG
@@ -233,16 +237,21 @@ void HelloTriangleApplication::initVulkan() {
     createInstance();
     setUpDebugCallback();
     createSurface();
+
     pickPhysicalDevice();
     createLogicalDevice();
+
     createSwapchain();
     createImageViews();
     createRenderPass();
     createGraphicsPipeline();
     createFramebuffers();
+
     createCommandPool();
     createVertexBuffer();
+    createIndexBuffer();
     createCommandBuffers();
+
     createSemaphores();
 }
 
@@ -262,6 +271,9 @@ void HelloTriangleApplication::mainLoop() {
 
 void HelloTriangleApplication::cleanUp() {
     cleanupSwapchain();
+
+    vkDestroyBuffer(device, indexBuffer, nullptr);
+    vkFreeMemory(device, indexBufferMemory, nullptr);
 
     vkDestroyBuffer(device, vertexBuffer, nullptr);
     vkFreeMemory(device, vertexBufferMemory, nullptr);
@@ -723,6 +735,34 @@ void HelloTriangleApplication::createVertexBuffer() {
     vkFreeMemory(device, stagingBufferMemory, nullptr);
 }
 
+void HelloTriangleApplication::createIndexBuffer() {
+    VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(bufferSize,
+                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 stagingBuffer,
+                 stagingBufferMemory);
+
+    void *data;
+    vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, indices.data(), (size_t) bufferSize);
+    vkUnmapMemory(device, stagingBufferMemory);
+
+    createBuffer(bufferSize,
+                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                 indexBuffer,
+                 indexBufferMemory);
+
+    copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+    vkDestroyBuffer(device, stagingBuffer, nullptr);
+    vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
 void HelloTriangleApplication::copyBuffer(
         VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
     VkCommandBufferAllocateInfo allocInfo = {
@@ -814,7 +854,9 @@ void HelloTriangleApplication::createCommandBuffers() {
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 
-        vkCmdDraw(commandBuffers[i], static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+        vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+        vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffers[i]);
 
