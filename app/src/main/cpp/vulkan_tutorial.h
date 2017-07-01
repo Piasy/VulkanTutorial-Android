@@ -68,9 +68,9 @@ struct Vertex {
     }
 };
 
-class HelloTriangleApplication {
+class VulkanTutorialApplication {
 public:
-    HelloTriangleApplication(
+    VulkanTutorialApplication(
             AAssetManager *assetManager,
             const char *vertexShader,
             const char *fragmentShader) :

@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     private static final String VERTEX_SHADER = "shaders/triangle.vert.spv";
     private static final String FRAGMENT_SHADER = "shaders/triangle.frag.spv";
 
-    private HelloTriangleApplication mTriangleApplication;
+    private VulkanTutorialApplication mTriangleApplication;
     private AssetManager mAssetManager;
     private boolean mFirstSurfaceChange;
     private boolean mFullscreen = true;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
         mAssetManager = getAssets();
 
-        mTriangleApplication = new HelloTriangleApplication(mAssetManager, VERTEX_SHADER,
+        mTriangleApplication = new VulkanTutorialApplication(mAssetManager, VERTEX_SHADER,
                 FRAGMENT_SHADER);
 
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface);

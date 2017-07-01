@@ -7,7 +7,7 @@ import android.view.Surface;
  * Created by Piasy{github.com/Piasy} on 30/06/2017.
  */
 
-public class HelloTriangleApplication {
+public class VulkanTutorialApplication {
 
     static {
         System.loadLibrary("vulkan");
@@ -16,7 +16,7 @@ public class HelloTriangleApplication {
 
     private long mNativeHandle;
 
-    public HelloTriangleApplication(AssetManager assetManager, String vertexShader,
+    public VulkanTutorialApplication(AssetManager assetManager, String vertexShader,
             String fragmentShader) {
         mNativeHandle = create(assetManager, vertexShader, fragmentShader);
     }
@@ -38,7 +38,7 @@ public class HelloTriangleApplication {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HelloTriangleApplication.run(mNativeHandle, surface);
+                VulkanTutorialApplication.run(mNativeHandle, surface);
             }
         }).start();
     }

@@ -6,12 +6,12 @@
 #include <android/native_window_jni.h>
 #include <android/asset_manager_jni.h>
 
-#include "vulkan_triangle.h"
+#include "vulkan_tutorial.h"
 
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_create(
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_create(
         JNIEnv *env, jclass type, jobject assetManager_, jstring vertexShader_,
         jstring fragmentShader_) {
 
@@ -24,7 +24,7 @@ Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_create(
     const char *vertexShader = env->GetStringUTFChars(vertexShader_, 0);
     const char *fragmentShader = env->GetStringUTFChars(fragmentShader_, 0);
 
-    HelloTriangleApplication *app = new HelloTriangleApplication(assetManager, vertexShader,
+    VulkanTutorialApplication *app = new VulkanTutorialApplication(assetManager, vertexShader,
                                                                  fragmentShader);
 
     env->ReleaseStringUTFChars(vertexShader_, vertexShader);
@@ -34,7 +34,7 @@ Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_create(
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_run(
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_run__JLandroid_view_Surface_2(
         JNIEnv *env, jclass type, jlong nativeHandle, jobject surface) {
     ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
     if (window == nullptr) {
@@ -42,35 +42,35 @@ Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_run(
         return;
     }
 
-    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    VulkanTutorialApplication *app = reinterpret_cast<VulkanTutorialApplication *>(nativeHandle);
     app->run(window);
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_pause(JNIEnv *env, jclass type,
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_pause__J(JNIEnv *env, jclass type,
                                                                        jlong nativeHandle) {
-    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    VulkanTutorialApplication *app = reinterpret_cast<VulkanTutorialApplication *>(nativeHandle);
     app->pause();
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_resume(JNIEnv *env, jclass type,
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_resume__J(JNIEnv *env, jclass type,
                                                                         jlong nativeHandle) {
-    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    VulkanTutorialApplication *app = reinterpret_cast<VulkanTutorialApplication *>(nativeHandle);
     app->resume();
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_surfaceChanged(
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_surfaceChanged__J(
         JNIEnv *env, jclass type, jlong nativeHandle) {
-    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    VulkanTutorialApplication *app = reinterpret_cast<VulkanTutorialApplication *>(nativeHandle);
     app->surfaceChanged();
 }
 
 JNIEXPORT void JNICALL
-Java_com_github_piasy_vulkantutorial_HelloTriangleApplication_stop(JNIEnv *env, jclass type,
+Java_com_github_piasy_vulkantutorial_VulkanTutorialApplication_stop__J(JNIEnv *env, jclass type,
                                                                       jlong nativeHandle) {
-    HelloTriangleApplication *app = reinterpret_cast<HelloTriangleApplication *>(nativeHandle);
+    VulkanTutorialApplication *app = reinterpret_cast<VulkanTutorialApplication *>(nativeHandle);
     app->stop();
 }
 
