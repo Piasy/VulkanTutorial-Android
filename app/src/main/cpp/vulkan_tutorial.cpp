@@ -10,6 +10,7 @@
 #define GLM_FORCE_RADIANS
 
 #include <gtc/matrix_transform.hpp>
+#include <cstring>
 
 #include "vulkan_tutorial.h"
 
@@ -40,10 +41,10 @@ const std::vector<uint16_t> indices = {
         0, 1, 2, 2, 3, 0
 };
 
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
+#ifdef USE_DEBUG_EXTENTIONS
 const bool enableValidationLayers = true;
+#else
+const bool enableValidationLayers = false;
 #endif
 
 VkResult CreateDebugReportCallbackEXT(

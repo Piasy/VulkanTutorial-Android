@@ -6,12 +6,12 @@ def ndkDir = properties.getProperty('ndk.dir')
 def valLayerBinDir = "${ndkDir}/sources/third_party/vulkan/src/build-android/jniLibs"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
     defaultConfig {
         applicationId "com.github.piasy.vulkantutorial"
         minSdkVersion 24
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -49,8 +49,7 @@ android {
 
             externalNativeBuild {
                 cmake {
-                    cppFlags "-frtti -fexceptions -std=c++11 -Werror -Wno-unused-variable " +
-                            "-DUSE_DEBUG_EXTENTIONS -DVK_USE_PLATFORM_ANDROID_KHR"
+                    cppFlags "-DUSE_DEBUG_EXTENTIONS -DVK_USE_PLATFORM_ANDROID_KHR"
                 }
             }
         }
@@ -58,6 +57,12 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            externalNativeBuild {
+                cmake {
+                    cppFlags "-DVK_USE_PLATFORM_ANDROID_KHR"
+                }
+            }
         }
     }
 
@@ -69,5 +74,6 @@ android {
 }
 
 dependencies {
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:25.3.1'
 }
