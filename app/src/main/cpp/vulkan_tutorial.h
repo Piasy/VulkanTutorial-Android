@@ -12,7 +12,7 @@
 #include <array>
 #include <string>
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vulkan_wrapper.h>
 
 #define APP_NAME "VK-TUTORIAL"

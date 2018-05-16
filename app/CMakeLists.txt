@@ -5,6 +5,10 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/conan_build/conanbuildinfo.cmake)
+set(CMAKE_CXX_COMPILER_VERSION "5.0") # Unknown miss-detection of the compiler by CMake
+conan_basic_setup(TARGETS)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -14,8 +18,6 @@ cmake_minimum_required(VERSION 3.4.1)
 set(SRC_DIR src/main/cpp)
 set(VK_WRAPPER_DIR src/main/cpp/vulkan_wrapper)
 set(VK_VAL_LAYER_SRC_DIR ${ANDROID_NDK}/sources/third_party/vulkan/src)
-set(GLM_SRC_DIR src/main/cpp/glm)
-set(STB_DIR src/main/cpp/stb)
 
 add_library( # Sets the name of the library.
              vulkan-tutorial
@@ -29,7 +31,7 @@ add_library( # Sets the name of the library.
              ${SRC_DIR}/vulkan_tutorial_jni.cpp
              )
 
-include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include  ${GLM_SRC_DIR} ${STB_DIR})
+include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include ${CONAN_INCLUDE_DIRS})
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -50,6 +52,8 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        vulkan-tutorial
+
+                       ${CONAN_LIBS}
 
                        # Links the target library to the log library
                        # included in the NDK.

@@ -1,0 +1,6 @@
+[requires]
+glm/0.9.8.5@g-truc/stable
+stb/20180214@conan/stable
+
+[generators]
+cmake

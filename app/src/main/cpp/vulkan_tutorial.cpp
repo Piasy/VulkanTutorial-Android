@@ -8,11 +8,10 @@
 #include <chrono>
 
 #define GLM_FORCE_RADIANS
+#include <glm/gtc/matrix_transform.hpp>
 
-#include <gtc/matrix_transform.hpp>
-#include <cstring>
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 
 #include "vulkan_tutorial.h"
 
