@@ -15,6 +15,7 @@ set(SRC_DIR src/main/cpp)
 set(VK_WRAPPER_DIR src/main/cpp/vulkan_wrapper)
 set(VK_VAL_LAYER_SRC_DIR ${ANDROID_NDK}/sources/third_party/vulkan/src)
 set(GLM_SRC_DIR src/main/cpp/glm)
+set(STB_DIR src/main/cpp/stb)
 
 add_library( # Sets the name of the library.
              vulkan-tutorial
@@ -28,7 +29,7 @@ add_library( # Sets the name of the library.
              ${SRC_DIR}/vulkan_tutorial_jni.cpp
              )
 
-include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include  ${GLM_SRC_DIR})
+include_directories(${VK_WRAPPER_DIR} ${VK_VAL_LAYER_SRC_DIR}/include  ${GLM_SRC_DIR} ${STB_DIR})
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
